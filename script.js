@@ -44,6 +44,15 @@ function addItem() {
     }
 }
 
+function removeItem(index, quantity) {
+    if (items[index].quantity > quantity) {
+        items[index].quantity -= quantity;
+    } else {
+        items.splice(index, 1);
+    }
+    updateItemList();
+}
+
 function updateItemList() {
     let itemList = document.getElementById('item-list');
     itemList.innerHTML = '';
@@ -51,18 +60,28 @@ function updateItemList() {
     items.forEach((item, index) => {
         let listItem = document.createElement('li');
         listItem.textContent = `${item.name} - $${item.price.toFixed(2)} x ${item.quantity}`;
-        
+
+        let removeQuantityInput = document.createElement('input');
+        removeQuantityInput.type = 'number';
+        removeQuantityInput.min = '1';
+        removeQuantityInput.placeholder = 'Qtd a Remover';
+
         let deleteButton = document.createElement('button');
         deleteButton.textContent = 'Apagar';
         deleteButton.onclick = () => {
-            items.splice(index, 1);
-            updateItemList();
+            let quantityToRemove = parseInt(removeQuantityInput.value);
+            if (!isNaN(quantityToRemove) && quantityToRemove > 0) {
+                removeItem(index, quantityToRemove);
+            } else {
+                alert('Por favor, insira uma quantidade válida para remover.');
+            }
         };
-        
+
+        listItem.appendChild(removeQuantityInput);
         listItem.appendChild(deleteButton);
         itemList.appendChild(listItem);
     });
-    
+
     updateTotalPrice();
 }
 
